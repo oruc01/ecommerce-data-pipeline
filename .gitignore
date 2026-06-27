@@ -1,0 +1,15 @@
+# Python keş faylları (lokal mühitdə avtomatik yaranır, repoya lazım deyil)
+__pycache__/
+*.pyc
+
+# Virtual mühit (Virtual Environment) qovluqları (bunu birazdan yaradacağıq)
+.venv/
+venv/
+env/
+
+# Gizli məlumatlar və şifrələr (gələcəkdə bura verilənlər bazası şifrələrini qoyacağıq)
+.env
+
+# Əməliyyat sisteminin yaratdığı lazımsız fayllar
+.DS_Store
+Thumbs.db
