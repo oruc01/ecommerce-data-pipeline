@@ -13,3 +13,6 @@ env/
 # Əməliyyat sisteminin yaratdığı lazımsız fayllar
 .DS_Store
 Thumbs.db
+
+# Layihə daxilində çəkilən xam və işlənmiş datalar (GitHub-a getməməlidir)
+data/
