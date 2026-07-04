@@ -1,6 +1,5 @@
 import psycopg2
 
-# Docker-dəki yeni parametrlərimiz
 DB_CONFIG = {
     "host": "localhost",
     "port": 5432,
@@ -15,8 +14,8 @@ def create_tables():
         conn = psycopg2.connect(**DB_CONFIG)
         cursor = conn.cursor()
 
-        # 1. Bronze cədvəli
-        create_bronze_table = """
+        # 1. Bronze
+        cursor.execute("""
         CREATE TABLE IF NOT EXISTS bronze_products (
             id SERIAL PRIMARY KEY,
             product_name VARCHAR(255) NOT NULL,
@@ -24,11 +23,10 @@ def create_tables():
             category VARCHAR(100),
             extracted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-        """
-        cursor.execute(create_bronze_table)
+        """)
 
-        # 2. Silver cədvəli
-        create_silver_table = """
+        # 2. Silver
+        cursor.execute("""
         CREATE TABLE IF NOT EXISTS silver_products (
             id INT PRIMARY KEY,
             product_name VARCHAR(255) NOT NULL,
@@ -36,11 +34,20 @@ def create_tables():
             category_upper VARCHAR(100),
             transformed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-        """
-        cursor.execute(create_silver_table)
+        """)
+
+        # 3. Gold
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS gold_category_summary (
+            category_upper VARCHAR(100) PRIMARY KEY,
+            total_products INT,
+            average_price NUMERIC(10, 2),
+            calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
         
         conn.commit()
-        print("Təbriklər! Həm 'bronze', həm 'silver' cədvəlləri uğurla hazır vəziyyətə gətirildi. 🎉")
+        print("Təbriklər! 'bronze', 'silver' və 'gold' cədvəlləri uğurla hazır vəziyyətə gətirildi. 🏆🎉")
 
         cursor.close()
         conn.close()
@@ -48,6 +55,5 @@ def create_tables():
     except Exception as e:
         print(f"Baza ilə əlaqə zamanı xəta baş verdi: {e}")
 
-# Bu hissə mütləq faylın ən aşağısında olmalıdır ki, kod icra olunsun!
 if __name__ == "__main__":
     create_tables()
