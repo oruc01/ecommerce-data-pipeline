@@ -11,7 +11,8 @@ A Medallion Architecture (Bronze → Silver → Gold) data pipeline that extract
 Setup (PostgreSQL runs in Docker; everything else runs locally with plain Python — no Airflow/orchestrator is wired up yet, despite the empty `dags/` directory):
 
 ```
-docker-compose up -d          # start Postgres (localhost:5432, see credentials below)
+cp .env.example .env          # fill in real DB credentials (never commit .env)
+docker-compose up -d          # start Postgres (localhost:5432, reads config from .env)
 pip install -r requirements.txt
 ```
 
@@ -44,16 +45,6 @@ Data flows through three layers, each backed by its own Postgres table, with one
 
 `pipeline.py` is the orchestrator: it imports each stage's function from `scripts/` (via `sys.path.append`) and runs them in sequence — `create_tables()` → `load_json_to_postgres()` → `transform_and_load_silver()` → `generate_gold_summary()`.
 
-Each script in `scripts/` is self-contained and independently runnable, and each hardcodes its own `DB_CONFIG` dict (host/port/database/user/password) rather than importing a shared config module — when changing DB credentials, update all of them:
-
-```python
-DB_CONFIG = {
-    "host": "localhost", "port": 5432,
-    "database": "ecommerce_warehouse",
-    "user": "oruc_user", "password": "my_secret_password"
-}
-```
-
-These must stay in sync with `docker-compose.yml`'s `postgres_db` service environment variables.
+Each script in `scripts/` is self-contained and independently runnable. All of them import `DB_CONFIG` from `scripts/db_config.py`, which loads `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD` from the environment via `python-dotenv` (reads `.env`, which is gitignored — use `.env.example` as the template). `docker-compose.yml` reads the same `.env` file for the Postgres container's credentials, so `.env` is the single source of truth for DB config.
 
 Every stage script follows the same pattern: connect via `psycopg2`, execute the stage's logic in a `try/except` that prints an Azerbaijani error message on failure (no re-raise), then close the cursor/connection. Table upserts use Postgres `ON CONFLICT ... DO UPDATE`, so re-running any stage is idempotent.

@@ -1,12 +1,6 @@
 import psycopg2
 
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "ecommerce_warehouse",
-    "user": "oruc_user",
-    "password": "my_secret_password"
-}
+from db_config import DB_CONFIG
 
 def create_tables():
     try:

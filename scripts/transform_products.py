@@ -1,14 +1,7 @@
 import psycopg2
 from datetime import datetime
 
-# Docker bazamızın parametrləri
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "ecommerce_warehouse",
-    "user": "oruc_user",
-    "password": "my_secret_password"
-}
+from db_config import DB_CONFIG
 
 def transform_and_load_silver():
     try:

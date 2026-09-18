@@ -2,14 +2,7 @@ import json
 import psycopg2
 from datetime import datetime
 
-# Sənin Docker parametrlərinə uyğun config
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "ecommerce_warehouse",
-    "user": "oruc_user",
-    "password": "my_secret_password"
-}
+from db_config import DB_CONFIG
 
 def load_json_to_postgres():
     try:

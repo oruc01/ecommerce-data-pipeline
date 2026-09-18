@@ -1,13 +1,7 @@
 import psycopg2
 from datetime import datetime
 
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "ecommerce_warehouse",
-    "user": "oruc_user",
-    "password": "my_secret_password"
-}
+from db_config import DB_CONFIG
 
 def generate_gold_summary():
     try:
